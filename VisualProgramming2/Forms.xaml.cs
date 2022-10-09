@@ -66,6 +66,7 @@ namespace VisualProgramming2
             if (txt_YearsOld.Text == "")
             {
                 isFilled = false;
+                MessageBox.Show("ааа");
                 txt_YearsOld.BorderBrush = Brushes.Red;
             }
 
