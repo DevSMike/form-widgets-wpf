@@ -21,54 +21,42 @@ namespace VisualProgramming2
     public partial class Forms : UserControl
     {
         private List<string> commands = new List<string>();
-        bool isListFilled = false;
-        //private bool isFilled = false;
-        enum blankFields
-        {
-            USERNAME,
-            JOB,
-            YEARS,
-            SALARY,
-            PASSWORD
-
-        }
+        private bool isListFilled = false;
+        private event Action ClearAllTextBoxes;
+     
         public Forms()
         {
             InitializeComponent();
+            Subscribe();
         }
-       private void changeBrushes(bool isFilled)
+        private void Subscribe()
         {
+            ClearAllTextBoxes += txt_CurrentJob.Clear;
+            ClearAllTextBoxes += txt_Password.Clear;
+            ClearAllTextBoxes += txt_Salary.Clear;
+            ClearAllTextBoxes += txt_UserName.Clear;
+            ClearAllTextBoxes += txt_YearsOld.Clear;
 
+        }
+        private bool changeBrushes(bool isFilled, TextBox tb)
+        {
+            if (tb.Text == String.Empty)
+            {
+                isFilled = false;
+                tb.BorderBrush = Brushes.Red;
+            }
+            return isFilled;
         }
         private bool isFilledBlanks()
         {
             bool isFilled = true;
-            if (txt_CurrentJob.Text == "")
-            {
-                isFilled = false;
-                txt_CurrentJob.BorderBrush = Brushes.Red;
-            }
-            if (txt_Password.Text == "")
-            {
-                isFilled = false;
-                txt_Password.BorderBrush = Brushes.Red;
-            }
-            if (txt_Salary.Text == "")
-            {
-                isFilled = false;
-                txt_Salary.BorderBrush = Brushes.Red;
-            }
-            if (txt_UserName.Text == "")
-            {
-                isFilled = false;
-                txt_UserName.BorderBrush = Brushes.Red;
-            }
-            if (txt_YearsOld.Text == "")
-            {
-                isFilled = false;
-                MessageBox.Show("ааа");
-                txt_YearsOld.BorderBrush = Brushes.Red;
-            }
+
+            isFilled = changeBrushes(isFilled, txt_UserName);
+            isFilled = changeBrushes(isFilled, txt_CurrentJob);
+            isFilled = changeBrushes(isFilled, txt_YearsOld);
+            isFilled = changeBrushes(isFilled, txt_Salary);
+            isFilled = changeBrushes(isFilled, txt_Password);
+
 
             return isFilled;
         }
@@ -116,18 +104,29 @@ namespace VisualProgramming2
                     isListFilled = true;
                 }
                 string message = "Ваши данные: " + '\n' ;
+
                 foreach (var commnd in commands)
                 {
-                    message += commnd + '\n';
+                   message += commnd + '\n';
                 }
-
+                
                 MessageBox.Show(message); 
 
             } else MessageBox.Show("Заполните остальные поля!");
         }
 
+        
         private void btn_Cancel_Click(object sender, RoutedEventArgs e)
         {
+            if (isFilledBlanks())
+            {
+                commands.Clear();
+                isListFilled = false;
+                ClearAllTextBoxes();
+                MessageBox.Show("Все поля и данные очищены!");
+            }
+            else MessageBox.Show("Поля итак пустые!");
+            
 
         }
     }
